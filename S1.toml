@@ -1,0 +1,233 @@
+[Meta]
+season = 1
+vip = false
+
+[Participants]
+males = [
+    "Aleks",
+    "Axel",
+    "Dominic",
+    "Elisha",
+    "Ferhat",
+    "Juliano",
+    "Kevin",
+    "Laurin",
+    "Mo",
+    "Rene",
+]
+females = [
+    "Aline",
+    "Ivana",
+    "Katharina",
+    "Laura",
+    "Luisa",
+    "Madleine",
+    "Melissa",
+    "Michelle",
+    "Nadine",
+    "Sabrina",
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Mo"]
+females = ["Ivana"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 1
+matchings = [
+    { male = "Kevin", female = "Aline" },
+    { male = "Juliano", female = "Ivana" },
+    { male = "Rene", female = "Katharina" },
+    { male = "Ferhat", female = "Laura" },
+    { male = "Axel", female = "Luisa" },
+    { male = "Laurin", female = "Madleine" },
+    { male = "Dominic", female = "Melissa" },
+    { male = "Mo", female = "Michelle" },
+    { male = "Elisha", female = "Nadine" },
+    { male = "Aleks", female = "Sabrina" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Dominic"]
+females = ["Melissa"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 2
+matchings = [
+    { male = "Ferhat", female = "Aline" },
+    { male = "Elisha", female = "Ivana" },
+    { male = "Kevin", female = "Katharina" },
+    { male = "Juliano", female = "Laura" },
+    { male = "Rene", female = "Luisa" },
+    { male = "Axel", female = "Madleine" },
+    { male = "Laurin", female = "Melissa" },
+    { male = "Mo", female = "Michelle" },
+    { male = "Aleks", female = "Nadine" },
+    { male = "Dominic", female = "Sabrina" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Mo"]
+females = ["Aline"]
+perfect_match = true
+
+[[Events]]
+type = 'MatchingNight'
+lights = 3
+matchings = [
+    { male = "Elisha", female = "Ivana" },
+    { male = "Kevin", female = "Katharina" },
+    { male = "Juliano", female = "Laura" },
+    { male = "Rene", female = "Luisa" },
+    { male = "Axel", female = "Madleine" },
+    { male = "Laurin", female = "Melissa" },
+    { male = "Ferhat", female = "Michelle" },
+    { male = "Aleks", female = "Nadine" },
+    { male = "Dominic", female = "Sabrina" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Laurin"]
+females = ["Melissa"]
+perfect_match = true
+
+[[Events]]
+type = 'MatchingNight'
+lights = 2
+matchings = [
+    { male = "Axel", female = "Ivana" },
+    { male = "Juliano", female = "Katharina" },
+    { male = "Kevin", female = "Laura" },
+    { male = "Rene", female = "Luisa" },
+    { male = "Ferhat", female = "Madleine" },
+    { male = "Elisha", female = "Michelle" },
+    { male = "Dominic", female = "Nadine" },
+    { male = "Aleks", female = "Sabrina" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Elisha"]
+females = ["Ivana"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 5
+matchings = [
+    { male = "Dominic", female = "Ivana" },
+    { male = "Kevin", female = "Katharina" },
+    { male = "Juliano", female = "Laura" },
+    { male = "Ferhat", female = "Luisa" },
+    { male = "Aleks", female = "Madleine" },
+    { male = "Axel", female = "Michelle" },
+    { male = "Rene", female = "Nadine" },
+    { male = "Elisha", female = "Sabrina" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Rene"]
+females = ["Michelle"]
+perfect_match = true
+
+[[Events]]
+type = 'NewParticipant'
+is_male = true
+name = "Edin"
+
+[[Events]]
+type = 'MatchingNight'
+lights = 5
+matchings = [
+    { male = "Juliano", female = "Ivana" },
+    { male = "Kevin", female = "Katharina" },
+    { male = "Edin", female = "Laura" },
+    { male = "Axel", female = "Luisa" },
+    { male = "Aleks", female = "Madleine" },
+    { male = "Elisha", female = "Nadine" },
+    { male = "Dominic", female = "Sabrina" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Edin"]
+females = ["Ivana"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 5
+matchings = [
+    { male = "Kevin", female = "Ivana" },
+    { male = "Elisha", female = "Katharina" },
+    { male = "Juliano", female = "Laura" },
+    { male = "Axel", female = "Luisa" },
+    { male = "Aleks", female = "Madleine" },
+    { male = "Ferhat", female = "Nadine" },
+    { male = "Dominic", female = "Sabrina" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Axel"]
+females = ["Sabrina"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 6
+matchings = [
+    { male = "Kevin", female = "Ivana" },
+    { male = "Aleks", female = "Katharina" },
+    { male = "Juliano", female = "Laura" },
+    { male = "Axel", female = "Luisa" },
+    { male = "Edin", female = "Madleine" },
+    { male = "Ferhat", female = "Nadine" },
+    { male = "Dominic", female = "Sabrina" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Ferhat"]
+females = ["Luisa"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 7
+matchings = [
+    { male = "Dominic", female = "Ivana" },
+    { male = "Aleks", female = "Katharina" },
+    { male = "Juliano", female = "Laura" },
+    { male = "Axel", female = "Luisa" },
+    { male = "Kevin", female = "Madleine" },
+    { male = "Ferhat", female = "Nadine" },
+    { male = "Elisha", female = "Sabrina" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Kevin"]
+females = ["Katharina"]
+perfect_match = true
+
+[[Events]]
+type = 'MatchingNight'
+lights = 10
+matchings = [
+    { male = "Dominic", female = "Ivana" },
+    { male = "Aleks", female = "Laura" },
+    { male = "Axel", female = "Luisa" },
+    { male = "Juliano", female = "Madleine" },
+    { male = "Ferhat", female = "Nadine" },
+    { male = "Elisha", female = "Sabrina" },
+]
