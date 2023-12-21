@@ -115,6 +115,8 @@ enum Event {
     NewParticipant {
         is_male: bool,
         name: String,
+        #[serde(default)]
+        is_duplicate: bool, // special case: S5 Melanie
     },
 }
 
@@ -177,7 +179,7 @@ fn validate_and_build_config(config: &mut Config) {
                     assert!(!gone_female_names.contains(&m.female));
                 }
             }
-            Event::NewParticipant { is_male, name } => {
+            Event::NewParticipant { is_male, name, .. } => {
                 if *is_male {
                     assert!(!male_names.contains(&name));
                     assert!(!gone_male_names.contains(&name));
@@ -192,24 +194,63 @@ fn validate_and_build_config(config: &mut Config) {
     }
 }
 
-fn iterate_matching_matricies(n: usize) -> impl std::iter::Iterator<Item = Array2D<bool>> {
-    let matching: Vec<usize> = (0..n).collect();
-    let mut permutations = matching.into_iter().permutations(n);
+fn iterate_matching_matricies(
+    n_males: usize,
+    n_females: usize,
+) -> Box<dyn std::iter::Iterator<Item = Array2D<bool>>> {
+    let n_min = n_males.min(n_females);
+    let n_max = n_males.max(n_females);
+    let n_diff = n_males.abs_diff(n_females);
 
-    std::iter::from_fn(move || match permutations.next() {
-        Some(permutation) => {
-            let mut matching_matrix = Array2D::filled_with(false, n, n);
-            for (male_idx, female_idx) in permutation.iter().enumerate() {
-                matching_matrix[(male_idx, *female_idx)] = true;
+    if n_diff > 0 {
+        // Multiset permuattions: n_min! <
+        let mut multisetpermutations = (0..n_diff)
+            .map(|_| 0..n_min)
+            .multi_cartesian_product()
+            .map(move |mprod| {
+                let mut x = mprod.clone();
+                x.extend(0..n_min);
+                x
+            })
+            .flat_map(move |matching| matching.into_iter().permutations(n_max))
+            .unique(); // TODO remove unique
+
+        Box::new(std::iter::from_fn(move || {
+            match multisetpermutations.next() {
+                Some(permutation) => {
+                    let mut matching_matrix = Array2D::filled_with(false, n_males, n_females);
+                    for (idx1, idx2) in permutation.iter().enumerate() {
+                        if n_males < n_females {
+                            matching_matrix[(*idx2, idx1)] = true;
+                        } else {
+                            matching_matrix[(idx1, *idx2)] = true;
+                        }
+                    }
+                    Some(matching_matrix)
+                }
+                None => None,
             }
-            Some(matching_matrix)
-        }
-        None => None,
-    })
+        }))
+    } else {
+        // Normal permutations: n_min!
+        let matching: Vec<usize> = (0..n_min).collect();
+        let mut permutations = matching.into_iter().permutations(n_min);
+
+        Box::new(std::iter::from_fn(move || match permutations.next() {
+            Some(permutation) => {
+                let mut matching_matrix = Array2D::filled_with(false, n_males, n_females);
+                for (male_idx, female_idx) in permutation.iter().enumerate() {
+                    matching_matrix[(male_idx, *female_idx)] = true;
+                }
+                Some(matching_matrix)
+            }
+            None => None,
+        }))
+    }
 }
 
 fn main() {
-    let contents = fs::read_to_string("S1.toml").unwrap();
+    let contents = fs::read_to_string("S5.toml").unwrap();
     let mut config: Config = from_str(&contents).unwrap();
 
     println!(
@@ -221,16 +262,12 @@ fn main() {
     validate_and_build_config(&mut config);
     // println!("{:?}", config);
 
-    assert_eq!(
+    let start = Instant::now();
+
+    let mut iter: Box<dyn Iterator<Item = Array2D<bool>>> = Box::new(iterate_matching_matricies(
         config.participants.males.len(),
         config.participants.females.len(),
-        "Unequal participant number at start not yet implemented"
-    );
-
-    let start = Instant::now();
-    let n: usize = config.participants.males.len();
-
-    let mut iter: Box<dyn Iterator<Item = Array2D<bool>>> = Box::new(iterate_matching_matricies(n));
+    ));
 
     let mut cur_perfect_matches: usize = 0;
     let mut n_match_box: usize = 0;
@@ -272,33 +309,66 @@ fn main() {
                     }));
                 n_matching_night += 1;
             }
-            Event::NewParticipant { is_male, name } => {
+            Event::NewParticipant {
+                is_male,
+                name,
+                is_duplicate,
+            } => {
                 println!("New Participant {}", name);
+                let curr_females_gone = females_gone.clone();
                 if is_male {
-                    // let x = females_gone.clone();
-                    // let filter_closure = move |i| !x.contains(i);
-                    iter = Box::new(iter.flat_map(|m| {
-                        (0..m.num_columns())
-                            // .filter(filter_closure)
-                            .map(move |i| {
-                                let mut as_rows = m.as_rows();
-                                let mut new_row = vec![false; m.num_columns()];
-                                new_row[i] = true;
-                                as_rows.push(new_row);
-                                Array2D::from_rows(&as_rows).unwrap()
-                            })
+                    iter = Box::new(iter.flat_map(move |m| {
+                        let curr_females_gone2 = curr_females_gone.clone();
+
+                        (0..m.num_columns()).filter_map(move |i| {
+                            if curr_females_gone2.contains(&i) {
+                                return None;
+                            }
+
+                            if is_duplicate {
+                                let sum: usize = m
+                                    .column_iter(i)
+                                    .unwrap()
+                                    .map(|&b| if b { 1 } else { 0 })
+                                    .sum();
+                                if sum != 2 {
+                                    // Hardcoded for S5 Melanie
+                                    return None;
+                                }
+                            }
+
+                            let mut as_rows = m.as_rows();
+                            let mut new_row = vec![false; m.num_columns()];
+                            new_row[i] = true;
+                            as_rows.push(new_row);
+                            Some(Array2D::from_rows(&as_rows).unwrap())
+                        })
                     }))
                 } else {
-                    iter = Box::new(iter.flat_map(|m| {
-                        (0..m.num_rows())
-                            // .filter(|i| !males_gone.contains(i))
-                            .map(move |i| {
-                                let mut as_columns = m.as_columns();
-                                let mut new_column = vec![false; m.num_rows()];
-                                new_column[i] = true;
-                                as_columns.push(new_column);
-                                Array2D::from_columns(&as_columns).unwrap()
-                            })
+                    let curr_males_gone = males_gone.clone();
+                    iter = Box::new(iter.flat_map(move |m| {
+                        let curr_males_gone2 = curr_males_gone.clone();
+
+                        (0..m.num_rows()).filter_map(move |i| {
+                            if curr_males_gone2.contains(&i) {
+                                return None;
+                            }
+
+                            if is_duplicate {
+                                let sum: usize =
+                                    m.row_iter(i).unwrap().map(|&b| if b { 1 } else { 0 }).sum();
+                                if sum != 2 {
+                                    // Hardcoded for S5 Melanie
+                                    return None;
+                                }
+                            }
+
+                            let mut as_columns = m.as_columns();
+                            let mut new_column = vec![false; m.num_rows()];
+                            new_column[i] = true;
+                            as_columns.push(new_column);
+                            Some(Array2D::from_columns(&as_columns).unwrap())
+                        })
                     }))
                 }
             }

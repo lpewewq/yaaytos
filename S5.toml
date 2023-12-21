@@ -1,0 +1,135 @@
+[Meta]
+season = 5
+vip = false
+
+[Participants]
+males = [
+    "Eti",
+    "Gerrit",
+    "Kevin",
+    "Martin",
+    "Paddy",
+    "Paul",
+    "Ryan",
+    "Sandro",
+    "Sidar",
+    "Wilson",
+]
+females = [
+    "Afra",
+    "Edda",
+    "Jana",
+    "Julia",
+    "Lina",
+    "Lisa-Marie",
+    "Maja",
+    "Pia",
+    "Shelly",
+    "Sina",
+    "Tais",
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Paul"]
+females = ["Jana"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 2
+matchings = [
+    { male = "Eti", female = "Lisa-Marie" },
+    { male = "Gerrit", female = "Pia" },
+    { male = "Kevin", female = "Sina" },
+    { male = "Martin", female = "Julia" },
+    { male = "Paddy", female = "Maja" },
+    { male = "Paul", female = "Tais" },
+    { male = "Ryan", female = "Lina" },
+    { male = "Sandro", female = "Edda" },
+    { male = "Sidar", female = "Jana" },
+    { male = "Wilson", female = "Shelly" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Ryan"]
+females = ["Lina"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 2
+matchings = [
+    { male = "Eti", female = "Afra" },
+    { male = "Gerrit", female = "Tais" },
+    { male = "Kevin", female = "Sina" },
+    { male = "Martin", female = "Lina" },
+    { male = "Paddy", female = "Shelly" },
+    { male = "Paul", female = "Lisa-Marie" },
+    { male = "Ryan", female = "Pia" },
+    { male = "Sandro", female = "Edda" },
+    { male = "Sidar", female = "Jana" },
+    { male = "Wilson", female = "Maja" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Kevin"]
+females = ["Maja"]
+perfect_match = false
+
+[[Events]]
+type = 'NewParticipant'
+is_male = false
+name = "Melanie"
+is_duplicate = true
+
+[[Events]]
+type = 'MatchBox'
+males = ["Eti"]
+females = ["Melanie"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 4
+matchings = [
+    { male = "Eti", female = "Maja" },
+    { male = "Gerrit", female = "Tais" },
+    { male = "Kevin", female = "Melanie" },
+    { male = "Martin", female = "Lisa-Marie" },
+    { male = "Paddy", female = "Julia" },
+    { male = "Paul", female = "Edda" },
+    { male = "Ryan", female = "Jana" },
+    { male = "Sandro", female = "Sina" },
+    { male = "Sidar", female = "Afra" },
+    { male = "Wilson", female = "Shelly" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Wilson"]
+females = ["Shelly"]
+perfect_match = true
+
+[[Events]]
+type = 'MatchingNight'
+lights = 3
+matchings = [
+    { male = "Eti", female = "Afra" },
+    { male = "Gerrit", female = "Tais" },
+    { male = "Kevin", female = "Sina" },
+    { male = "Martin", female = "Julia" },
+    { male = "Paddy", female = "Lina" },
+    { male = "Paul", female = "Lisa-Marie" },
+    { male = "Ryan", female = "Edda" },
+    { male = "Sandro", female = "Pia" },
+    { male = "Sidar", female = "Jana" },
+]
+
+# [[Events]]
+# type = 'MatchBox'
+# males = ["Gerrit"]
+# females = ["Tais"]
+# perfect_match = true
