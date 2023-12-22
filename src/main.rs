@@ -11,19 +11,7 @@ use std::sync::{
     Arc,
 };
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let file_path = &args.get(1).expect("Missing config file path.");
-    let config = config::build(file_path);
-
-    println!(
-        "Parsed AYTO {}Season {} Config",
-        if config.meta.vip { "VIP " } else { "" },
-        config.meta.season
-    );
-
-    let start = Instant::now();
-
+fn get_matchings(config: &config::Config) -> Vec<usize> {
     let mut iterator = permutations::iterate_matching_matricies(
         config.participants.males.len(),
         config.participants.females.len(),
@@ -87,7 +75,53 @@ fn main() {
         .map(|v| v.load(Ordering::Relaxed) as usize)
         .collect();
     overview.push(count);
+    overview
+}
 
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let file_path = &args.get(1).expect("Missing config file path.");
+    let config = config::build(file_path);
+
+    println!(
+        "Parsed AYTO {}Season {} Config",
+        if config.meta.vip { "VIP " } else { "" },
+        config.meta.season
+    );
+
+    let start = Instant::now();
+    let overview = get_matchings(&config);
     println!("Number of Matchings: {overview:?}");
     println!("Duration: {:?}", start.elapsed());
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{config, get_matchings};
+
+    #[test]
+    fn test_s5() {
+        let config = config::build("S5.toml");
+        let overview = get_matchings(&config);
+        assert_eq!(
+            overview,
+            vec![
+                199584000, 179625600, 33752266, 27149771, 6755599, 6222309, 6222309, 5598916,
+                83141, 51701, 19143, 291, 115
+            ]
+        );
+    }
+
+    #[test]
+    fn test_s1() {
+        let config = config::build("S1.toml");
+        let overview = get_matchings(&config);
+        assert_eq!(
+            overview,
+            vec![
+                3628800, 3265920, 1201464, 1084655, 202933, 19012, 16682, 4720, 1696, 1432, 144,
+                20, 140, 75, 63, 15, 10, 1, 1, 1, 1, 1
+            ]
+        );
+    }
 }
