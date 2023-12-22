@@ -7,9 +7,8 @@ pub fn new_map(
     females_gone: Vec<usize>,
 ) -> impl FnMut(Array2D<bool>) -> Vec<Array2D<bool>> {
     move |m: Array2D<bool>| {
-        let males_gone = males_gone.clone();
-        let females_gone = females_gone.clone();
         if is_male {
+            let females_gone = females_gone.clone();
             (0..m.num_columns())
                 .filter_map(move |i| {
                     if females_gone.contains(&i) {
@@ -34,6 +33,7 @@ pub fn new_map(
                 })
                 .collect()
         } else {
+            let males_gone = males_gone.clone();
             (0..m.num_rows())
                 .filter_map(move |i| {
                     if males_gone.contains(&i) {
