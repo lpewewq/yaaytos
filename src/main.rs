@@ -1,5 +1,7 @@
 use array2d::Array2D;
+use indicatif::ProgressBar;
 use itertools::Itertools;
+use number_encoding::{factorial, multinomial};
 use serde::Deserialize;
 use std::fs;
 use std::time::Instant;
@@ -45,24 +47,6 @@ fn matching_night(
     }
     cur_matches == n_matches
 }
-
-// fn new_participant(
-//     matching_matrix: &Array2D<bool>, // n * n
-//     is_male: bool,
-// ) -> impl std::iter::Iterator<Item = Array2D<bool>> {
-//     // add row
-//     (0..matching_matrix.num_columns()).map(|i| {
-//         let mut as_rows = matching_matrix.as_rows();
-//         let mut new_row = vec![false; matching_matrix.num_columns()];
-//         new_row[i] = true;
-//         as_rows.push(new_row);
-//         Array2D::from_rows(&as_rows).unwrap()
-//     });
-
-//     std::iter::from_fn(move || {
-//         Array2D
-//     })
-// }
 
 #[derive(Debug, Deserialize)]
 struct Config {
@@ -203,7 +187,6 @@ fn iterate_matching_matricies(
     let n_diff = n_males.abs_diff(n_females);
 
     if n_diff > 0 {
-        // Multiset permuattions: n_min! <
         let mut multisetpermutations = (0..n_diff)
             .map(|_| 0..n_min)
             .multi_cartesian_product()
@@ -215,9 +198,21 @@ fn iterate_matching_matricies(
             .flat_map(move |matching| matching.into_iter().permutations(n_max))
             .unique(); // TODO remove unique
 
+        let n_multisetpermutations: usize = (0..n_diff)
+            .map(|_| 0..n_min)
+            .multi_cartesian_product()
+            .map(move |mprod| {
+                let mut x = mprod.clone();
+                x.extend(0..n_min);
+                multinomial(&x)
+            })
+            .sum();
+        let bar = ProgressBar::new(n_multisetpermutations as u64);
+
         Box::new(std::iter::from_fn(move || {
             match multisetpermutations.next() {
                 Some(permutation) => {
+                    bar.inc(1);
                     let mut matching_matrix = Array2D::filled_with(false, n_males, n_females);
                     for (idx1, idx2) in permutation.iter().enumerate() {
                         if n_males < n_females {
@@ -232,12 +227,14 @@ fn iterate_matching_matricies(
             }
         }))
     } else {
-        // Normal permutations: n_min!
-        let matching: Vec<usize> = (0..n_min).collect();
-        let mut permutations = matching.into_iter().permutations(n_min);
+        let mut permutations = (0..n_min).permutations(n_min);
+
+        let n_permutations = factorial(n_min);
+        let bar = ProgressBar::new(n_permutations as u64);
 
         Box::new(std::iter::from_fn(move || match permutations.next() {
             Some(permutation) => {
+                bar.inc(1);
                 let mut matching_matrix = Array2D::filled_with(false, n_males, n_females);
                 for (male_idx, female_idx) in permutation.iter().enumerate() {
                     matching_matrix[(male_idx, *female_idx)] = true;
@@ -250,7 +247,7 @@ fn iterate_matching_matricies(
 }
 
 fn main() {
-    let contents = fs::read_to_string("S5.toml").unwrap();
+    let contents = fs::read_to_string("S1.toml").unwrap();
     let mut config: Config = from_str(&contents).unwrap();
 
     println!(
@@ -274,11 +271,8 @@ fn main() {
     let mut n_matching_night: usize = 0;
     let mut males_gone: Vec<usize> = vec![];
     let mut females_gone: Vec<usize> = vec![];
-    for event in config.events {
-        // iter = Box::new(iter.map(|m| {
-        //     // TODO capture statistics
-        //     m
-        // }));
+    // let mut stats: Vec<usize> = vec![0, config.events.len()];
+    for event in config.events.iter() {
         match event {
             Event::MatchBox {
                 males,
@@ -291,13 +285,13 @@ fn main() {
                     "Match Box {}: Perfect {} {:?} {:?}",
                     n_match_box, perfect_match, males, females
                 );
-                if perfect_match {
+                if *perfect_match {
                     cur_perfect_matches += 1;
                     males_gone.extend(male_indicies.clone());
                     females_gone.extend(female_indicies.clone());
                 }
                 iter = Box::new(iter.filter(move |m| {
-                    match_box(&m, perfect_match, &male_indicies, &female_indicies)
+                    match_box(&m, *perfect_match, &male_indicies, &female_indicies)
                 }));
                 n_match_box += 1;
             }
@@ -316,7 +310,7 @@ fn main() {
             } => {
                 println!("New Participant {}", name);
                 let curr_females_gone = females_gone.clone();
-                if is_male {
+                if *is_male {
                     iter = Box::new(iter.flat_map(move |m| {
                         let curr_females_gone2 = curr_females_gone.clone();
 
@@ -325,7 +319,7 @@ fn main() {
                                 return None;
                             }
 
-                            if is_duplicate {
+                            if *is_duplicate {
                                 let sum: usize = m
                                     .column_iter(i)
                                     .unwrap()
@@ -354,7 +348,7 @@ fn main() {
                                 return None;
                             }
 
-                            if is_duplicate {
+                            if *is_duplicate {
                                 let sum: usize =
                                     m.row_iter(i).unwrap().map(|&b| if b { 1 } else { 0 }).sum();
                                 if sum != 2 {
