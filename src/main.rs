@@ -6,6 +6,10 @@ mod match_box;
 mod matching_night;
 mod new_participant;
 mod permutations;
+use std::sync::{
+    atomic::{AtomicU64, Ordering},
+    Arc,
+};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -29,8 +33,17 @@ fn main() {
     let mut males_gone: Vec<usize> = vec![];
     let mut females_gone: Vec<usize> = vec![];
 
-    for event in config.events.iter() {
-        // println!("{event:?}");
+    let overview = Arc::new(Vec::from_iter(
+        std::iter::repeat_with(|| AtomicU64::new(0)).take(config.events.len()),
+    ));
+    for (i, event) in config.events.iter().enumerate() {
+        // Counting elements per stage
+        let overview = overview.clone();
+        iterator = Box::new(iterator.inspect(move |_| {
+            overview[i].fetch_add(1, Ordering::Relaxed);
+        }));
+
+        // Apply event filter / map
         iterator = match event {
             config::Event::MatchBox {
                 perfect_match,
@@ -68,7 +81,13 @@ fn main() {
         }
     }
 
-    let n_matchings: usize = iterator.count();
-    println!("Final Number of Matchings: {:?}", n_matchings);
+    let count = iterator.count();
+    let mut overview: Vec<usize> = overview
+        .iter()
+        .map(|v| v.load(Ordering::Relaxed) as usize)
+        .collect();
+    overview.push(count);
+
+    println!("Number of Matchings: {overview:?}");
     println!("Duration: {:?}", start.elapsed());
 }
