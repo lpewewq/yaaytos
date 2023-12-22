@@ -1,4 +1,3 @@
-use array2d::Array2D;
 use std::env;
 use std::time::Instant;
 
@@ -21,11 +20,10 @@ fn main() {
 
     let start = Instant::now();
 
-    let mut iterator: Box<dyn Iterator<Item = Array2D<bool>>> =
-        Box::new(permutations::iterate_matching_matricies(
-            config.participants.males.len(),
-            config.participants.females.len(),
-        ));
+    let mut iterator = permutations::iterate_matching_matricies(
+        config.participants.males.len(),
+        config.participants.females.len(),
+    );
 
     let mut cur_perfect_matches: usize = 0;
     let mut males_gone: Vec<usize> = vec![];
