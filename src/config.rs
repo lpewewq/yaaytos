@@ -25,7 +25,7 @@ pub struct Participants {
     pub females: Vec<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Match {
     pub male: String,
     pub female: String,
