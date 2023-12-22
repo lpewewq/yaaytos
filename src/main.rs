@@ -21,7 +21,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let mut iter: Box<dyn Iterator<Item = Array2D<bool>>> =
+    let mut iterator: Box<dyn Iterator<Item = Array2D<bool>>> =
         Box::new(permutations::iterate_matching_matricies(
             config.participants.males.len(),
             config.participants.females.len(),
@@ -33,7 +33,7 @@ fn main() {
 
     for event in config.events.iter() {
         // println!("{event:?}");
-        iter = match event {
+        iterator = match event {
             config::Event::MatchBox {
                 perfect_match,
                 male_indicies,
@@ -45,17 +45,14 @@ fn main() {
                     males_gone.extend(male_indicies.clone());
                     females_gone.extend(female_indicies.clone());
                 }
-                let filter_closure = match_box::new_filter(
-                    *perfect_match,
-                    male_indicies.to_vec(),
-                    female_indicies.to_vec(),
-                );
-                Box::new(iter.filter(filter_closure))
+                let filter_closure =
+                    match_box::new_filter(*perfect_match, male_indicies, female_indicies);
+                Box::new(iterator.filter(filter_closure))
             }
             config::Event::MatchingNight { lights, matchings } => {
                 let filter_closure =
-                    matching_night::new_filter(lights - cur_perfect_matches, matchings.to_vec());
-                Box::new(iter.filter(filter_closure))
+                    matching_night::new_filter(lights - cur_perfect_matches, matchings);
+                Box::new(iterator.filter(filter_closure))
             }
             config::Event::NewParticipant {
                 is_male,
@@ -65,15 +62,15 @@ fn main() {
                 let map_closure = new_participant::new_map(
                     *is_male,
                     *is_duplicate,
-                    males_gone.to_vec(),
-                    females_gone.to_vec(),
+                    males_gone.clone(),
+                    females_gone.clone(),
                 );
-                Box::new(iter.flat_map(map_closure))
+                Box::new(iterator.flat_map(map_closure))
             }
         }
     }
 
-    let n_matchings: usize = iter.count();
+    let n_matchings: usize = iterator.count();
     println!("Final Number of Matchings: {:?}", n_matchings);
     println!("Duration: {:?}", start.elapsed());
 }
