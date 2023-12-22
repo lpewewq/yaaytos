@@ -5,7 +5,7 @@ use crate::config;
 fn matching_night(
     matching_matrix: &Array2D<bool>,
     n_matches: usize,
-    matching: &Vec<config::Match>,
+    matching: &[config::Match],
 ) -> bool {
     let mut cur_matches = 0;
     for m in matching.iter() {
@@ -16,9 +16,9 @@ fn matching_night(
     cur_matches == n_matches
 }
 
-pub fn new_filter(
+pub fn new_filter<'a>(
     n_matches: usize,
-    matching: Vec<config::Match>,
-) -> impl FnMut(&Array2D<bool>) -> bool {
-    move |m: &Array2D<bool>| matching_night(&m, n_matches, &matching)
+    matching: &'a [config::Match],
+) -> impl FnMut(&Array2D<bool>) -> bool + 'a {
+    move |m: &Array2D<bool>| matching_night(&m, n_matches, matching)
 }
