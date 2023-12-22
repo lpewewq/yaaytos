@@ -128,8 +128,22 @@ matchings = [
     { male = "Sidar", female = "Jana" },
 ]
 
-# [[Events]]
-# type = 'MatchBox'
-# males = ["Gerrit"]
-# females = ["Tais"]
-# perfect_match = true
+[[Events]]
+type = 'MatchBox'
+males = ["Gerrit"]
+females = ["Tais", "Melanie", "Pia"]
+perfect_match = true
+
+[[Events]]
+type = 'MatchingNight'
+lights = 4
+matchings = [
+    { male = "Eti", female = "Maja" },
+    { male = "Kevin", female = "Julia" },
+    { male = "Martin", female = "Lisa-Marie" },
+    { male = "Paddy", female = "Lina" },
+    { male = "Paul", female = "Edda" },
+    { male = "Ryan", female = "Jana" },
+    { male = "Sandro", female = "Sina" },
+    { male = "Sidar", female = "Afra" },
+]
