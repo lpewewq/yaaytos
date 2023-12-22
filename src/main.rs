@@ -1,4 +1,5 @@
 use array2d::Array2D;
+use std::env;
 use std::time::Instant;
 
 mod config;
@@ -8,7 +9,9 @@ mod new_participant;
 mod permutations;
 
 fn main() {
-    let config = config::build("S1.toml");
+    let args: Vec<String> = env::args().collect();
+    let file_path = &args.get(1).expect("Missing config file path.");
+    let config = config::build(file_path);
 
     println!(
         "Parsed AYTO {}Season {} Config",
