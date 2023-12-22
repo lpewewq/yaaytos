@@ -1,5 +1,7 @@
 use itertools::Itertools;
 use serde::Deserialize;
+use toml::from_str;
+use std::fs::read_to_string;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
@@ -57,7 +59,7 @@ pub enum Event {
     },
 }
 
-pub fn validate_and_build_config(config: &mut Config) {
+fn validate_and_build_config(config: &mut Config) {
     let mut male_names: Vec<String> = config.participants.males.clone();
     let mut female_names = config.participants.females.clone();
 
@@ -129,4 +131,12 @@ pub fn validate_and_build_config(config: &mut Config) {
             }
         }
     }
+}
+
+
+pub fn build(path: &str) -> Config {
+    let contents = read_to_string(path).unwrap();
+    let mut config: Config = from_str(&contents).unwrap();
+    validate_and_build_config(&mut config);
+    config
 }

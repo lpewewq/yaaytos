@@ -2,9 +2,7 @@ use array2d::Array2D;
 use indicatif::ProgressBar;
 use itertools::Itertools;
 use number_encoding::{factorial, multinomial};
-use std::fs;
 use std::time::Instant;
-use toml::from_str;
 
 mod config;
 
@@ -118,17 +116,13 @@ fn iterate_matching_matricies(
 }
 
 fn main() {
-    let contents = fs::read_to_string("S1.toml").unwrap();
-    let mut config: config::Config = from_str(&contents).unwrap();
+    let config = config::build("S1.toml");
 
     println!(
         "Parsed AYTO {}Season {} Config",
         if config.meta.vip { "VIP " } else { "" },
         config.meta.season
     );
-
-    config::validate_and_build_config(&mut config);
-    // println!("{:?}", config);
 
     let start = Instant::now();
 
