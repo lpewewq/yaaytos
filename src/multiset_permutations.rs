@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use std::cmp::Reverse;
 
 // Cool-lex ordered multiset permutations
@@ -8,6 +7,7 @@ use std::cmp::Reverse;
 pub struct MultisetPermutations<I> {
     vec: Vec<I>,
     first_next: bool,
+    current_index: usize,
 }
 
 impl<I: Copy + Ord> MultisetPermutations<I> {
@@ -17,6 +17,7 @@ impl<I: Copy + Ord> MultisetPermutations<I> {
         MultisetPermutations {
             vec: sorted_vec,
             first_next: true,
+            current_index: vec.len().saturating_sub(2),
         }
     }
 }
@@ -27,30 +28,30 @@ impl<I: Clone + std::cmp::PartialOrd> Iterator for MultisetPermutations<I> {
     fn next(&mut self) -> Option<Self::Item> {
         if self.first_next {
             self.first_next = false;
-            let result = Some(self.vec.clone());
-            let shift_element = self.vec.remove(self.vec.len() - 1);
+            return Some(self.vec.clone());
+        }
+
+        if self.current_index + 2 < self.vec.len()
+            || (self.current_index + 1 < self.vec.len()
+                && self.vec[self.current_index + 1] < self.vec[0])
+        {
+            let shift_index = if self.current_index + 2 < self.vec.len()
+                && self.vec[self.current_index + 2] <= self.vec[self.current_index]
+            {
+                self.current_index + 2
+            } else {
+                self.current_index + 1
+            };
+            let shift_element = self.vec.remove(shift_index);
             self.vec.insert(0, shift_element);
-            result
-        } else {
-            let i_option = self.vec.iter().tuple_windows().position(|(x, y)| x < y);
-            match i_option {
-                Some(i) => {
-                    let shift_index = if i + 2 < self.vec.len() {
-                        if self.vec[i] < self.vec[i + 2] {
-                            i + 1
-                        } else {
-                            i + 2
-                        }
-                    } else {
-                        self.vec.len() - 1
-                    };
-                    let result = Some(self.vec.clone());
-                    let shift_element = self.vec.remove(shift_index);
-                    self.vec.insert(0, shift_element);
-                    result
-                }
-                None => None,
+            if self.vec[0] < self.vec[1] {
+                self.current_index = 0;
+            } else {
+                self.current_index += 1;
             }
+            Some(self.vec.clone())
+        } else {
+            None
         }
     }
 }
@@ -58,6 +59,7 @@ impl<I: Clone + std::cmp::PartialOrd> Iterator for MultisetPermutations<I> {
 #[cfg(test)]
 mod tests {
     use crate::multiset_permutations::MultisetPermutations;
+    use std::time::Instant;
 
     #[test]
     fn test1() {
@@ -75,6 +77,53 @@ mod tests {
         assert_eq!(iter.next(), Some(vec![1, 2, 1, 4]));
         assert_eq!(iter.next(), Some(vec![1, 1, 2, 4]));
         assert_eq!(iter.next(), Some(vec![2, 1, 1, 4]));
+        assert_eq!(iter.next(), None);
+    }
+    #[test]
+    fn test2() {
+        let vec = vec![0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        let iter = MultisetPermutations::new(&vec);
+        let now = Instant::now();
+        let count = iter.count(); // ~2.22s
+        println!("Number of permutations {} in {:?}", count, now.elapsed());
+        assert_eq!(count, 19958400);
+    }
+    #[test]
+    fn test3() {
+        let vec = vec![0];
+        let mut iter = MultisetPermutations::new(&vec);
+        assert_eq!(iter.next(), Some(vec![0]));
+        assert_eq!(iter.next(), None);
+    }
+    #[test]
+    fn test4() {
+        let vec = vec![0, 1];
+        let mut iter = MultisetPermutations::new(&vec);
+        assert_eq!(iter.next(), Some(vec![1, 0]));
+        assert_eq!(iter.next(), Some(vec![0, 1]));
+        assert_eq!(iter.next(), None);
+    }
+    #[test]
+    fn test5() {
+        let vec = vec![0, 0];
+        let mut iter = MultisetPermutations::new(&vec);
+        assert_eq!(iter.next(), Some(vec![0, 0]));
+        assert_eq!(iter.next(), None);
+    }
+    #[test]
+    fn test6() {
+        let vec = vec![0, 0, 1];
+        let mut iter = MultisetPermutations::new(&vec);
+        assert_eq!(iter.next(), Some(vec![1, 0, 0]));
+        assert_eq!(iter.next(), Some(vec![0, 1, 0]));
+        assert_eq!(iter.next(), Some(vec![0, 0, 1]));
+        assert_eq!(iter.next(), None);
+    }
+    #[test]
+    fn test7() {
+        let vec: Vec<i32> = vec![];
+        let mut iter = MultisetPermutations::new(&vec);
+        assert_eq!(iter.next(), Some(vec![]));
         assert_eq!(iter.next(), None);
     }
 }
