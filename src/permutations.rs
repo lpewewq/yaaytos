@@ -1,4 +1,4 @@
-use crate::multiset_permutations::MultisetPermutations;
+use crate::multiset_permutations::ToMultisetPermutations;
 use array2d::Array2D;
 use indicatif::ProgressBar;
 use itertools::Itertools;
@@ -20,7 +20,7 @@ pub fn iterate_matching_matricies(
                 x.extend(0..n_min);
                 x
             })
-            .flat_map(|matching| MultisetPermutations::new(&matching));
+            .flat_map(|matching| matching.into_iter().multiset_permutations());
 
         let n_multisetpermutations: usize = (0..n_diff)
             .map(|_| 0..n_min)

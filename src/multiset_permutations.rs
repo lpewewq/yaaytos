@@ -56,15 +56,28 @@ impl<I: Clone + std::cmp::PartialOrd> Iterator for MultisetPermutations<I> {
     }
 }
 
+pub(crate) trait ToMultisetPermutations<I> {
+    fn multiset_permutations(self) -> MultisetPermutations<I>;
+}
+
+impl<T, I> ToMultisetPermutations<T> for I
+where
+    I: Iterator<Item = T>,
+    T: Copy + Ord,
+{
+    fn multiset_permutations(self) -> MultisetPermutations<T> {
+        MultisetPermutations::new(&self.collect())
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::multiset_permutations::MultisetPermutations;
+    use crate::multiset_permutations::{MultisetPermutations, ToMultisetPermutations};
     use std::time::Instant;
 
     #[test]
     fn test1() {
-        let vec = vec![1, 4, 2, 1];
-        let mut iter = MultisetPermutations::new(&vec);
+        let mut iter = vec![1, 4, 2, 1].into_iter().multiset_permutations();
         assert_eq!(iter.next(), Some(vec![4, 2, 1, 1]));
         assert_eq!(iter.next(), Some(vec![1, 4, 2, 1]));
         assert_eq!(iter.next(), Some(vec![4, 1, 2, 1]));
@@ -81,8 +94,9 @@ mod tests {
     }
     #[test]
     fn test2() {
-        let vec = vec![0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-        let iter = MultisetPermutations::new(&vec);
+        let iter = vec![0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            .into_iter()
+            .multiset_permutations();
         let now = Instant::now();
         let count = iter.count(); // ~2.22s
         println!("Number of permutations {} in {:?}", count, now.elapsed());
@@ -90,30 +104,26 @@ mod tests {
     }
     #[test]
     fn test3() {
-        let vec = vec![0];
-        let mut iter = MultisetPermutations::new(&vec);
+        let mut iter = vec![0].into_iter().multiset_permutations();
         assert_eq!(iter.next(), Some(vec![0]));
         assert_eq!(iter.next(), None);
     }
     #[test]
     fn test4() {
-        let vec = vec![0, 1];
-        let mut iter = MultisetPermutations::new(&vec);
+        let mut iter = vec![0, 1].into_iter().multiset_permutations();
         assert_eq!(iter.next(), Some(vec![1, 0]));
         assert_eq!(iter.next(), Some(vec![0, 1]));
         assert_eq!(iter.next(), None);
     }
     #[test]
     fn test5() {
-        let vec = vec![0, 0];
-        let mut iter = MultisetPermutations::new(&vec);
+        let mut iter = vec![0, 0].into_iter().multiset_permutations();
         assert_eq!(iter.next(), Some(vec![0, 0]));
         assert_eq!(iter.next(), None);
     }
     #[test]
     fn test6() {
-        let vec = vec![0, 0, 1];
-        let mut iter = MultisetPermutations::new(&vec);
+        let mut iter = vec![0, 0, 1].into_iter().multiset_permutations();
         assert_eq!(iter.next(), Some(vec![1, 0, 0]));
         assert_eq!(iter.next(), Some(vec![0, 1, 0]));
         assert_eq!(iter.next(), Some(vec![0, 0, 1]));
@@ -121,8 +131,7 @@ mod tests {
     }
     #[test]
     fn test7() {
-        let vec: Vec<i32> = vec![];
-        let mut iter = MultisetPermutations::new(&vec);
+        let mut iter: MultisetPermutations<i32> = vec![].into_iter().multiset_permutations();
         assert_eq!(iter.next(), Some(vec![]));
         assert_eq!(iter.next(), None);
     }
