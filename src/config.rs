@@ -1,7 +1,8 @@
+use array2d::Array2D;
 use itertools::Itertools;
 use serde::Deserialize;
-use toml::from_str;
 use std::fs::read_to_string;
+use toml::from_str;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
@@ -9,7 +10,7 @@ pub struct Config {
     pub meta: Meta,
     #[serde(rename = "Participants")]
     pub participants: Participants,
-    #[serde(rename = "Events")]
+    #[serde(default, rename = "Events")]
     pub events: Vec<Event>,
 }
 
@@ -35,9 +36,42 @@ pub struct Match {
     pub female_index: usize,
 }
 
+#[derive(Debug)]
+pub struct WrappedArray2D<I>(pub Array2D<I>);
+
+impl<I: Clone> Default for WrappedArray2D<I> {
+    fn default() -> Self {
+        Self(Array2D::from_rows(&vec![]).unwrap())
+    }
+}
+
+impl<'de, I: Clone> Deserialize<'de> for WrappedArray2D<I> {
+    fn deserialize<D>(_deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        todo!()
+    }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Event {
+    #[serde(default)]
+    pub number_matchings: usize,
+    #[serde(default)]
+    pub matching_distribution: WrappedArray2D<usize>,
+    #[serde(default)]
+    pub all_males: Vec<String>,
+    #[serde(default)]
+    pub all_females: Vec<String>,
+    #[serde(flatten)]
+    pub kind: EventType,
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(tag = "type")]
-pub enum Event {
+pub enum EventType {
+    Start {},
     MatchBox {
         males: Vec<String>,
         females: Vec<String>,
@@ -60,6 +94,17 @@ pub enum Event {
 }
 
 fn validate_and_build_config(config: &mut Config) {
+    config.events.insert(
+        0,
+        Event {
+            number_matchings: 0,
+            matching_distribution: WrappedArray2D(Array2D::from_rows(&vec![]).unwrap()),
+            all_males: config.participants.males.clone(),
+            all_females: config.participants.females.clone(),
+            kind: EventType::Start {},
+        },
+    );
+
     let mut male_names: Vec<String> = config.participants.males.clone();
     let mut female_names = config.participants.females.clone();
 
@@ -73,8 +118,8 @@ fn validate_and_build_config(config: &mut Config) {
     let mut gone_female_names = vec![];
 
     for event in config.events.iter_mut() {
-        match event {
-            Event::MatchBox {
+        match &mut event.kind {
+            EventType::MatchBox {
                 males,
                 females,
                 perfect_match,
@@ -97,7 +142,7 @@ fn validate_and_build_config(config: &mut Config) {
                     gone_female_names.extend(females.clone());
                 }
             }
-            Event::MatchingNight { matchings, lights } => {
+            EventType::MatchingNight { matchings, lights } => {
                 assert!(*lights <= 10);
                 assert!(matchings.len() <= 10);
 
@@ -118,7 +163,7 @@ fn validate_and_build_config(config: &mut Config) {
                     assert!(!gone_female_names.contains(&m.female));
                 }
             }
-            Event::NewParticipant { is_male, name, .. } => {
+            EventType::NewParticipant { is_male, name, .. } => {
                 if *is_male {
                     assert!(!male_names.contains(&name));
                     assert!(!gone_male_names.contains(&name));
@@ -129,10 +174,17 @@ fn validate_and_build_config(config: &mut Config) {
                     female_names.push(name.clone());
                 }
             }
+            _ => {}
         }
+        event.all_males = male_names.clone();
+        event.all_females = female_names.clone();
+        event.matching_distribution = WrappedArray2D(Array2D::filled_with(
+            0,
+            male_names.len(),
+            female_names.len(),
+        ));
     }
 }
-
 
 pub fn build(path: &str) -> Config {
     let contents = read_to_string(path).unwrap();
