@@ -147,3 +147,49 @@ matchings = [
     { male = "Sandro", female = "Sina" },
     { male = "Sidar", female = "Afra" },
 ]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Sandro"]
+females = ["Sina"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 5
+matchings = [
+    { male = "Eti", female = "Maja" },
+    { male = "Kevin", female = "Lina" },
+    { male = "Martin", female = "Lisa-Marie" },
+    { male = "Paddy", female = "Edda" },
+    { male = "Paul", female = "Sina" },
+    { male = "Ryan", female = "Jana" },
+    { male = "Sandro", female = "Afra" },
+    { male = "Sidar", female = "Julia" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Paul"]
+females = ["Julia"]
+perfect_match = false
+
+[[Events]]
+type = 'MatchingNight'
+lights = 5
+matchings = [
+    { male = "Eti", female = "Maja" },
+    { male = "Kevin", female = "Lina" },
+    { male = "Sidar", female = "Lisa-Marie" },
+    { male = "Ryan", female = "Edda" },
+    { male = "Paul", female = "Sina" },
+    { male = "Paddy", female = "Jana" },
+    { male = "Martin", female = "Afra" },
+    { male = "Sandro", female = "Julia" },
+]
+
+[[Events]]
+type = 'MatchBox'
+males = ["Eti"]
+females = ["Maja"]
+perfect_match = false
