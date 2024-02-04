@@ -188,8 +188,6 @@ matchings = [
     { male = "Sandro", female = "Julia" },
 ]
 
-perfect_match = false
-
 [[Events]]
 type = 'MatchingNight'
 lights = 4
@@ -224,7 +222,7 @@ matchings = [
     { male = "Sandro", female = "Julia" },
 ]
 
-[[Eventss]]
+[[Events]]
 type = 'MatchBox' 
 males = ["Kevin"] 
 females = ["Lina"] 
@@ -242,4 +240,3 @@ matchings = [
     { male = "Martin", female = "Afra" },
     { male = "Sandro", female = "Julia" },
 ]
-
