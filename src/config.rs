@@ -5,6 +5,7 @@ use std::fs::read_to_string;
 use toml::from_str;
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Config {
     #[serde(rename = "Meta")]
     pub meta: Meta,
@@ -15,18 +16,21 @@ pub struct Config {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Meta {
     pub season: u8,
     pub vip: bool,
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Participants {
     pub males: Vec<String>,
     pub females: Vec<String>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct Match {
     pub male: String,
     pub female: String,
