@@ -8,7 +8,6 @@ use itertools::Itertools;
 mod config;
 mod match_box;
 mod matching_night;
-mod multiset_permutations;
 mod new_participant;
 mod permutations;
 
