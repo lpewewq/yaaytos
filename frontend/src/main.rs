@@ -1,52 +1,40 @@
 #![allow(non_snake_case)]
 
 use dioxus::prelude::*;
-use dioxus_logger::tracing::{info, Level};
+use dioxus_logger::tracing::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Routable, Debug, PartialEq)]
-enum Route {
-    #[route("/")]
-    Home {},
-    #[route("/blog/:id")]
-    Blog { id: i32 },
+pub static BASE_API_URL: &str = "http//0.0.0.0:3000/seasons";
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct Season {
+    year: u16,
+}
+
+pub async fn get_seasons() -> Result<Vec<Season>, reqwest::Error> {
+    reqwest::get(format!("{}", BASE_API_URL)).await?.json::<Vec<Season>>().await
 }
 
 fn main() {
     // Init logger
-    dioxus_logger::init(Level::INFO).expect("failed to init logger");
+    dioxus_logger::init(Level::DEBUG).expect("failed to init logger");
     info!("starting app");
     launch(App);
 }
 
 fn App() -> Element {
-    rsx! {
-        Router::<Route> {}
-    }
-}
+    info!("Loading seasons");
+    let seasons = use_resource(move || get_seasons());
 
-#[component]
-fn Blog(id: i32) -> Element {
-    rsx! {
-        Link { to: Route::Home {}, "Go to counter" }
-        "Blog post {id}"
-    }
-}
-
-#[component]
-fn Home() -> Element {
-    let mut count = use_signal(|| 0);
-
-    rsx! {
-        Link {
-            to: Route::Blog {
-                id: count()
-            },
-            "Go to blog"
-        }
-        div {
-            h1 { "High-Five counter: {count}" }
-            button { onclick: move |_| count += 1, "Up high!" }
-            button { onclick: move |_| count -= 1, "Down low!" }
-        }
+    match &*seasons.read_unchecked() {
+        Some(Ok(list)) => rsx! {
+            div {
+                for season in list {
+                    h1 { "Season {season.year}" }
+                }
+            }
+        },
+        Some(Err(err)) => rsx! {"An error occurred while fetching seasons {err}"},
+        None => rsx! {"Loading seasons"},
     }
 }
