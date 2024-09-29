@@ -1,38 +1,9 @@
-# Are You The One Perfect Matchings
+# Development
 
-Generate the correct participant matching for the reality TV show **Are Yout The One?** by generating and filtering all possible multiset permutations.
+Run the following command in the root of the project to start the Dioxus dev server:
 
-## Results Overview
+```bash
+dx serve --hot-reload
+```
 
-### Season 5
-
-Correct Matching which was **not** found:
-| Male   | Female              |
-| ------ | ------------------- |
-| Eti    | Maja                |
-| Gerrit | Tais (Melanie, Pia) |
-| Kevin  | Lina                |
-| Martin | Sina                |
-| Paddy  | Afra                |
-| Paul   | Lisa-Marie          |
-| Ryan   | Jana                |
-| Sandro | Julia               |
-| Sidar  | Edda                |
-| Wilson | Shelly              |
-
-
-### Season 1
-
-Correct Matching which was found:
-| Male           | Female    |
-| -------------- | --------- |
-| Aleks          | Laura     |
-| Axel           | Luisa     |
-| Dominic        | Ivana     |
-| Elisha         | Sabrina   |
-| Ferhat         | Nadine    |
-| Juliano (Edin) | Madleine  |
-| Kevin          | Katharina |
-| Laurin         | Melissa   |
-| Mo             | Aline     |
-| Rene           | Michelle  |
+- Open the browser to http://localhost:8080
