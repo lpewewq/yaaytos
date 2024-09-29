@@ -1,7 +1,7 @@
 [application]
 
 # App (Project) Name
-name = "yaaytos"
+name = "yaaytos-frontend"
 
 # Dioxus App Default Platform
 # web, desktop, fullstack
