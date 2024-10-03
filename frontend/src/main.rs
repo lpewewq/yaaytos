@@ -2,14 +2,9 @@
 
 use dioxus::prelude::*;
 use dioxus_logger::tracing::*;
-use serde::{Deserialize, Serialize};
+use yaaytos_common::Season;
 
 pub static BASE_API_URL: &str = "http://localhost:3000/";
-
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub struct Season {
-    year: u16,
-}
 
 pub async fn get_seasons() -> Result<Vec<Season>, reqwest::Error> {
     reqwest::get(format!("{}seasons", BASE_API_URL)).await?.json().await

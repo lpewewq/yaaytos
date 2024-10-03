@@ -2710,6 +2710,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6a5cbf750400958819fb6178eaa83bee5cd9c29a26a40cc241df8c70fdd46984"
 
 [[package]]
+name = "yaaytos-common"
+version = "0.1.0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "yaaytos-frontend"
 version = "0.1.0"
 dependencies = [
@@ -2718,6 +2725,7 @@ dependencies = [
  "dioxus-logger",
  "reqwest",
  "serde",
+ "yaaytos-common",
 ]
 
 [[package]]

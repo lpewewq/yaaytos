@@ -909,4 +909,12 @@ dependencies = [
  "tower-http",
  "tracing",
  "tracing-subscriber",
+ "yaaytos-common",
+]
+
+[[package]]
+name = "yaaytos-common"
+version = "0.1.0"
+dependencies = [
+ "serde",
 ]

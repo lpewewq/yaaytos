@@ -3,10 +3,11 @@ use axum::{
     routing::get,
     Json, Router,
 };
-use serde::Serialize;
 use tower_http::cors::{AllowHeaders, Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 use tracing::{debug, info};
+
+use yaaytos_common::Season;
 
 #[tokio::main]
 async fn main() {
@@ -28,11 +29,6 @@ async fn main() {
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
-}
-
-#[derive(Serialize, Debug)]
-struct Season {
-    year: u16,
 }
 
 async fn seasons() -> (StatusCode, Json<Vec<Season>>) {
