@@ -18,6 +18,8 @@ pub async fn get_seasons() -> Result<Vec<Season>, reqwest::Error> {
 fn main() {
     // Init logger
     dioxus_logger::init(Level::DEBUG).expect("failed to init logger");
+    console_error_panic_hook::set_once();
+
     info!("starting app");
     launch(App);
 }

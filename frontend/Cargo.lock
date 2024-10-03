@@ -2713,6 +2713,7 @@ checksum = "6a5cbf750400958819fb6178eaa83bee5cd9c29a26a40cc241df8c70fdd46984"
 name = "yaaytos-frontend"
 version = "0.1.0"
 dependencies = [
+ "console_error_panic_hook",
  "dioxus",
  "dioxus-logger",
  "reqwest",
