@@ -1,17 +1,12 @@
 #![allow(non_snake_case)]
 
+mod components;
+
 use dioxus::prelude::*;
 use dioxus_logger::tracing::*;
-use yaaytos_common::Season;
-
-pub static BASE_API_URL: &str = "http://localhost:3000/";
-
-pub async fn get_seasons() -> Result<Vec<Season>, reqwest::Error> {
-    reqwest::get(format!("{}season", BASE_API_URL)).await?.json().await
-}
+use crate::components::Home;
 
 fn main() {
-    // Init logger
     dioxus_logger::init(Level::DEBUG).expect("failed to init logger");
     console_error_panic_hook::set_once();
 
@@ -19,19 +14,15 @@ fn main() {
     launch(App);
 }
 
+#[component]
 fn App() -> Element {
-    info!("Loading seasons");
-    let seasons = use_resource(move || get_seasons());
-
-    match &*seasons.read_unchecked() {
-        Some(Ok(list)) => rsx! {
-            div {
-                for season in list {
-                    h1 { "Season {season.uuid} published {season.published}" }
-                }
-            }
-        },
-        Some(Err(err)) => rsx! {"An error occurred while fetching seasons {err}"},
-        None => rsx! {"Loading seasons"},
+    rsx! {
+        Router::<Route> {}
     }
+}
+
+#[derive(Clone, Routable, Debug, PartialEq)]
+enum Route {
+    #[route("/")]
+    Home {},
 }
