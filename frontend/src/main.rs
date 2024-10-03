@@ -2,9 +2,9 @@
 
 mod components;
 
+use crate::components::{Season, Seasons};
 use dioxus::prelude::*;
 use dioxus_logger::tracing::*;
-use crate::components::Home;
 
 fn main() {
     dioxus_logger::init(Level::DEBUG).expect("failed to init logger");
@@ -23,6 +23,10 @@ fn App() -> Element {
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
-    #[route("/")]
-    Home {},
+    #[route("/season/:uuid")]
+    Season { uuid: String },
+
+    #[route("/season")]
+    #[redirect("/:.._segments", |_segments: Vec<String>| Route::Seasons {})]
+    Seasons {},
 }
