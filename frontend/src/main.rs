@@ -7,7 +7,7 @@ use yaaytos_common::Season;
 pub static BASE_API_URL: &str = "http://localhost:3000/";
 
 pub async fn get_seasons() -> Result<Vec<Season>, reqwest::Error> {
-    reqwest::get(format!("{}seasons", BASE_API_URL)).await?.json().await
+    reqwest::get(format!("{}season", BASE_API_URL)).await?.json().await
 }
 
 fn main() {
@@ -27,7 +27,7 @@ fn App() -> Element {
         Some(Ok(list)) => rsx! {
             div {
                 for season in list {
-                    h1 { "Season {season.year}" }
+                    h1 { "Season {season.uuid} published {season.published}" }
                 }
             }
         },

@@ -3,10 +3,11 @@ use axum::{
     routing::get,
     Json, Router,
 };
+use chrono::NaiveDate;
 use tower_http::cors::{AllowHeaders, Any, CorsLayer};
 use tower_http::trace::TraceLayer;
-use tracing::{debug, info};
-
+use tracing::info;
+use uuid::Uuid;
 use yaaytos_common::Season;
 
 #[tokio::main]
@@ -22,7 +23,7 @@ async fn main() {
 
     // build our application with routes
     let app = Router::new()
-        .route("/seasons", get(seasons))
+        .route("/season", get(season))
         .layer(tracing_layer)
         .layer(cors_layer);
 
@@ -31,8 +32,10 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn seasons() -> (StatusCode, Json<Vec<Season>>) {
-    let seasons = vec![Season { year: 2023 }, Season { year: 2024 }];
-    debug!("seasons {:?}", seasons);
+async fn season() -> (StatusCode, Json<Vec<Season>>) {
+    let seasons = vec![
+        Season { uuid: Uuid::new_v4().to_string(), number: 0, published: NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(), is_vip: false },
+        Season { uuid: Uuid::new_v4().to_string(), number: 1, published: NaiveDate::from_ymd_opt(2024, 1, 1).unwrap(), is_vip: true },
+    ];
     (StatusCode::OK, Json(seasons))
 }
