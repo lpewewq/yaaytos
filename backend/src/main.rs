@@ -4,6 +4,7 @@ use axum::{
     Json, Router,
 };
 use serde::Serialize;
+use tower_http::cors::{AllowHeaders, Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 use tracing::{debug, info};
 
@@ -13,10 +14,16 @@ async fn main() {
     tracing_subscriber::fmt().with_max_level(tracing::Level::DEBUG).init();
     info!("starting app");
 
+    let tracing_layer = TraceLayer::new_for_http();
+    let cors_layer = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_headers(AllowHeaders::any());
+
     // build our application with routes
     let app = Router::new()
         .route("/seasons", get(seasons))
-        .layer(TraceLayer::new_for_http());
+        .layer(tracing_layer)
+        .layer(cors_layer);
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
