@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use dioxus_logger::tracing::*;
 use serde::{Deserialize, Serialize};
 
-pub static BASE_API_URL: &str = "http//0.0.0.0:3000/seasons";
+pub static BASE_API_URL: &str = "http://localhost:3000/";
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Season {
@@ -12,7 +12,7 @@ pub struct Season {
 }
 
 pub async fn get_seasons() -> Result<Vec<Season>, reqwest::Error> {
-    reqwest::get(format!("{}", BASE_API_URL)).await?.json::<Vec<Season>>().await
+    reqwest::get(format!("{}seasons", BASE_API_URL)).await?.json().await
 }
 
 fn main() {
