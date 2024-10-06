@@ -23,10 +23,10 @@ fn App() -> Element {
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
-    #[route("/season/:uuid")]
+    #[route("/seasons/:uuid")]
     Season { uuid: String },
 
-    #[route("/season")]
+    #[route("/seasons")]
     #[redirect("/:.._segments", |_segments: Vec<String>| Route::Seasons {})]
     Seasons {},
 }

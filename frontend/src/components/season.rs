@@ -7,7 +7,7 @@ use yaaytos_common::Season;
 use chrono::Datelike;
 
 pub static BASE_API_URL: &str = "http://localhost:3000";
-pub static SEASON_API_URL: &str = "/season";
+pub static SEASON_API_URL: &str = "/seasons";
 
 pub async fn get_season(uuid: String) -> Result<Season, reqwest::Error> {
     reqwest::get(format!("{}{}/{}", BASE_API_URL, SEASON_API_URL, uuid)).await?.json().await
