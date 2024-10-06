@@ -3,7 +3,7 @@ use axum::http::StatusCode;
 use axum::Json;
 use chrono::NaiveDate;
 use uuid::Uuid;
-use yaaytos_common::{Gender, Participation, ParticipationType, Person, Season};
+use yaaytos_common::{Event, EventType, Gender, Participation, ParticipationType, Person, Season};
 
 pub async fn get_seasons() -> (StatusCode, Json<Vec<Season>>) {
     let seasons = vec![
@@ -47,4 +47,39 @@ pub async fn get_season_participations(Path(uuid): Path<String>) -> (StatusCode,
         },
     ];
     (StatusCode::OK, Json(participation))
+}
+
+pub async fn get_season_events(Path(uuid): Path<String>) -> (StatusCode, Json<Vec<Event>>) {
+    let events = vec![
+        Event {
+            uuid: Uuid::new_v4().to_string(),
+            season_uuid: uuid.to_string(),
+            order: 0,
+            r#type: EventType::MatchBox {
+                is_perfect: Some(true),
+            },
+        },
+        Event {
+            uuid: Uuid::new_v4().to_string(),
+            season_uuid: uuid.to_string(),
+            order: 1,
+            r#type: EventType::MatchingNight {
+                num_perfect: Some(3),
+            },
+        },
+        Event {
+            uuid: Uuid::new_v4().to_string(),
+            season_uuid: uuid.to_string(),
+            order: 2,
+            r#type: EventType::NewPerson {
+                person: Person {
+                    uuid: Uuid::new_v4().to_string(),
+                    name: "New Person".to_string(),
+                    ig_handle: None,
+                    gender: Gender::Male,
+                },
+            },
+        }
+    ];
+    (StatusCode::OK, Json(events))
 }

@@ -4,3 +4,5 @@ mod person;
 pub use person::*;
 mod participation;
 pub use participation::*;
+mod event;
+pub use event::*;

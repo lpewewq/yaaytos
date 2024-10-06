@@ -4,7 +4,7 @@ use dioxus::core_macro::{component, rsx};
 use dioxus::dioxus_core::Element;
 use dioxus::hooks::use_resource;
 use dioxus::prelude::*;
-use yaaytos_common::{Participation, Season};
+use yaaytos_common::{Event, Participation, Season};
 
 pub static BASE_API_URL: &str = "http://localhost:3000";
 pub static SEASON_API_URL: &str = "/seasons";
@@ -19,6 +19,10 @@ pub async fn get_seasons() -> Result<Vec<Season>, reqwest::Error> {
 
 pub async fn get_participations(uuid: String) -> Result<Vec<Participation>, reqwest::Error> {
     reqwest::get(format!("{}{}/{}/participations", BASE_API_URL, SEASON_API_URL, uuid)).await?.json().await
+}
+
+pub async fn get_events(uuid: String) -> Result<Vec<Event>, reqwest::Error> {
+    reqwest::get(format!("{}{}/{}/events", BASE_API_URL, SEASON_API_URL, uuid)).await?.json().await
 }
 
 #[component]
@@ -48,9 +52,11 @@ pub fn Season(uuid: String) -> Element {
     let season = use_resource(move || get_season(uuid_clone.clone()));
     let uuid_clone = uuid.clone();
     let participations = use_resource(move || get_participations(uuid_clone.clone()));
+    let uuid_clone = uuid.clone();
+    let events = use_resource(move || get_events(uuid_clone.clone()));
 
-    match (&*season.read_unchecked(), &*participations.read_unchecked()) {
-        (Some(Ok(season)), Some(Ok(participations))) => rsx! {
+    match (&*season.read_unchecked(), &*participations.read_unchecked(), &*events.read_unchecked()) {
+        (Some(Ok(season)), Some(Ok(participations)), Some(Ok(events))) => rsx! {
             Link { to: Route::Seasons {  }, "Go back" }
             h1 { if season.is_vip { "VIP " } else {""} "Season {season.number} ({season.published.year()})" }
             div {
@@ -64,9 +70,17 @@ pub fn Season(uuid: String) -> Element {
                     }
                 }
             }
+            div {
+                for event in events {
+                    h2 {
+                        "Event {event.order}"
+                    }
+                }
+            }
         },
-        (Some(Err(_)), _) => rsx! {"An error occurred while fetching season"},
-        (_, Some(Err(_))) => rsx! {"An error occurred while fetching participations"},
-        _ => rsx! {"Fetching season and participations"},
+        (Some(Err(_)), _, _) => rsx! {"An error occurred while fetching season"},
+        (_, Some(Err(_)), _) => rsx! {"An error occurred while fetching participations"},
+        (_, _, Some(Err(_))) => rsx! {"An error occurred while fetching events"},
+        _ => rsx! {"Loading"},
     }
 }
