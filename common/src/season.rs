@@ -7,4 +7,5 @@ pub struct Season {
     pub number: i32,
     pub published: NaiveDate,
     pub is_vip: bool,
+    pub is_finished: bool,
 }
