@@ -1,4 +1,5 @@
 mod api;
+mod db;
 
 use crate::api::{events, participations, persons, seasons};
 use axum::Router;

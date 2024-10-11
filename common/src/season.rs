@@ -7,5 +7,12 @@ pub struct Season {
     pub number: i32,
     pub published: NaiveDate,
     pub is_vip: bool,
-    pub is_finished: bool,
+    pub status: SeasonStatus,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub enum SeasonStatus {
+    UPCOMING,
+    ONGOING,
+    COMPLETED,
 }

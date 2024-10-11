@@ -3,6 +3,7 @@ use axum::routing::get;
 use axum::Router;
 
 mod get;
+mod errors;
 
 pub fn router() -> Router {
     Router::new()
