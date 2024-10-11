@@ -2,6 +2,7 @@ use chrono::NaiveDate;
 use uuid::Uuid;
 use yaaytos_common::{Season, SeasonStatus};
 
+#[derive(Clone)]
 pub struct SeasonDb {
     pub uuid: Uuid,
     pub number: i32,

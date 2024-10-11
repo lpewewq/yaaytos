@@ -1,5 +1,6 @@
 mod api;
 mod db;
+mod state;
 
 use crate::api::{events, participations, persons, seasons};
 use axum::Router;
@@ -18,12 +19,12 @@ async fn main() {
         .allow_origin(Any)
         .allow_headers(AllowHeaders::any());
 
-    // build our application with routes
+    let state = Default::default();
     let app = Router::new()
-        .nest("/seasons", seasons::router())
-        .nest("/events", events::router())
-        .nest("/participants", participations::router())
-        .nest("/persons", persons::router())
+        .nest("/seasons", seasons::router(&state))
+        .nest("/events", events::router(&state))
+        .nest("/participants", participations::router(&state))
+        .nest("/persons", persons::router(&state))
         .layer(tracing_layer)
         .layer(cors_layer);
 
