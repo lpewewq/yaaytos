@@ -1,6 +1,6 @@
 mod api;
 
-use crate::api::seasons;
+use crate::api::{events, participations, persons, seasons};
 use axum::Router;
 use tower_http::cors::{AllowHeaders, Any, CorsLayer};
 use tower_http::trace::TraceLayer;
@@ -20,6 +20,9 @@ async fn main() {
     // build our application with routes
     let app = Router::new()
         .nest("/seasons", seasons::router())
+        .nest("/events", events::router())
+        .nest("/participants", participations::router())
+        .nest("/persons", persons::router())
         .layer(tracing_layer)
         .layer(cors_layer);
 
