@@ -21,14 +21,14 @@ impl From<PersonDb> for Person {
 impl PersonDb {
     pub fn create_male(name: &str) -> Self {
         PersonDb {
-            uuid: Default::default(),
+            uuid: Uuid::new_v4(),
             name: name.to_string(),
             is_male: true,
         }
     }
     pub fn create_female(name: &str) -> Self {
         PersonDb {
-            uuid: Default::default(),
+            uuid: Uuid::new_v4(),
             name: name.to_string(),
             is_male: false,
         }

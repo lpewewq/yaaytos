@@ -5,6 +5,7 @@ use yaaytos_common::{Participation, ParticipationType};
 pub struct ParticipationDb {
     pub person_uuid: Uuid,
     pub season_uuid: Uuid,
+    pub is_starter: bool,
 }
 
 impl From<ParticipationDb> for Participation {
@@ -12,7 +13,7 @@ impl From<ParticipationDb> for Participation {
         Participation {
             season_uuid: value.season_uuid.to_string(),
             person_uuid: value.person_uuid.to_string(),
-            r#type: ParticipationType::Starter,
+            r#type: if value.is_starter { ParticipationType::Starter } else { ParticipationType::Addition },
         }
     }
 }
