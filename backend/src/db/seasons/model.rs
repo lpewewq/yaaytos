@@ -1,4 +1,5 @@
-use chrono::NaiveDate;
+use crate::db::participations::model::ParticipationDb;
+use crate::db::persons::model::PersonDb;
 use uuid::Uuid;
 use yaaytos_common::{Season, SeasonStatus};
 
@@ -6,7 +7,6 @@ use yaaytos_common::{Season, SeasonStatus};
 pub struct SeasonDb {
     pub uuid: Uuid,
     pub number: i32,
-    pub published: NaiveDate,
     pub is_vip: bool,
 }
 
@@ -15,10 +15,21 @@ impl From<SeasonDb> for Season {
         Season {
             uuid: value.uuid.to_string(),
             number: value.number,
-            published: value.published,
             is_vip: value.is_vip,
             status: SeasonStatus::UPCOMING,
         }
     }
 }
 
+
+impl SeasonDb {
+    pub fn add_persons(&self, persons: &Vec<PersonDb>) -> Vec<ParticipationDb> {
+        persons.into_iter()
+            .map(|person|
+                ParticipationDb {
+                    season_uuid: self.uuid.clone(),
+                    person_uuid: person.uuid.clone(),
+                }
+            ).collect()
+    }
+}

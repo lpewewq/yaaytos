@@ -1,91 +1,21 @@
-use axum::extract::Path;
+use crate::api::events::errors::EventError;
+use crate::db;
+use crate::state::AppState;
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::Json;
-use uuid::Uuid;
-use yaaytos_common::{Event, EventType, Gender, Match, Participation, ParticipationType, Person};
+use yaaytos_common::Event;
 
-pub async fn get_events() -> (StatusCode, Json<Vec<Event>>) {
-    let events = vec![
-        Event {
-            uuid: Uuid::new_v4().to_string(),
-            season_uuid: Uuid::new_v4().to_string(),
-            order: 0,
-            r#type: EventType::MatchBox {
-                r#match: Match {
-                    male: Person {
-                        uuid: Uuid::new_v4().to_string(),
-                        name: "Male".to_string(),
-                        ig_handle: None,
-                        gender: Gender::Male,
-                    },
-                    female: Person {
-                        uuid: Uuid::new_v4().to_string(),
-                        name: "Female".to_string(),
-                        ig_handle: None,
-                        gender: Gender::Female,
-                    },
-                    probability: None,
-                },
-                is_perfect: Some(true),
-            },
-            matching_probabilities: Default::default(),
-        },
-        Event {
-            uuid: Uuid::new_v4().to_string(),
-            season_uuid: Uuid::new_v4().to_string(),
-            order: 1,
-            r#type: EventType::MatchingNight {
-                matching: vec![],
-                probabilities: None,
-                num_perfect: Some(3),
-            },
-            matching_probabilities: Default::default(),
-        },
-        Event {
-            uuid: Uuid::new_v4().to_string(),
-            season_uuid: Uuid::new_v4().to_string(),
-            order: 2,
-            r#type: EventType::NewPerson {
-                participation: Participation {
-                    season_uuid: Uuid::new_v4().to_string(),
-                    person: Person {
-                        uuid: Uuid::new_v4().to_string(),
-                        name: "New Person".to_string(),
-                        ig_handle: None,
-                        gender: Gender::Male,
-                    },
-                    r#type: ParticipationType::Addition,
-                },
-            },
-            matching_probabilities: Default::default(),
-        }
-    ];
+pub async fn get_events(State(state): State<AppState>) -> (StatusCode, Json<Vec<Event>>) {
+    let events = db::events::get::list(&state).into_iter().map(Event::from).collect();
     (StatusCode::OK, Json(events))
 }
-pub async fn get_event(Path(uuid): Path<String>) -> (StatusCode, Json<Event>) {
-    let event = Event {
-        uuid: Uuid::new_v4().to_string(),
-        season_uuid: uuid,
-        order: 0,
-        r#type: EventType::MatchBox {
-            r#match: Match {
-                male: Person {
-                    uuid: Uuid::new_v4().to_string(),
-                    name: "Male".to_string(),
-                    ig_handle: None,
-                    gender: Gender::Male,
-                },
-                female: Person {
-                    uuid: Uuid::new_v4().to_string(),
-                    name: "Female".to_string(),
-                    ig_handle: None,
-                    gender: Gender::Female,
-                },
-                probability: None,
-            },
-            is_perfect: Some(true),
-        },
-        matching_probabilities: Default::default(),
+pub async fn get_event(State(state): State<AppState>, Path(uuid): Path<String>) -> Result<Json<Event>, EventError> {
+    let Ok(uuid) = uuid.parse() else {
+        return Err(EventError::InvalidUuid(uuid))
     };
-    (StatusCode::OK, Json(event))
+    let Some(event) = db::events::get::by_uuid(&state, uuid) else {
+        return Err(EventError::UuidNotFound(uuid))
+    };
+    Ok(Json(event.into()))
 }

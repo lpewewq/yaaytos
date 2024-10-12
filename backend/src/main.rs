@@ -23,7 +23,7 @@ async fn main() {
     let app = Router::new()
         .nest("/seasons", seasons::router(&state))
         .nest("/events", events::router(&state))
-        .nest("/participants", participations::router(&state))
+        .nest("/participations", participations::router(&state))
         .nest("/persons", persons::router(&state))
         .layer(tracing_layer)
         .layer(cors_layer);

@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 pub struct Person {
     pub uuid: String,
     pub name: String,
-    pub ig_handle: Option<String>,
     pub gender: Gender,
 }
 

@@ -4,6 +4,5 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Match {
     pub male: Person,
-    pub female: Person,
-    pub probability: Option<f32>
+    pub female: Person
 }

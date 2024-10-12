@@ -9,6 +9,6 @@ mod errors;
 pub fn router(state: &AppState) -> Router {
     Router::new()
         .route("/", get(get_seasons))
-        .route("/:id", get(get_season))
+        .route("/:uuid", get(get_season))
         .with_state(state.clone())
 }
