@@ -46,7 +46,7 @@ impl Default for AppState {
         let persons = [&starter_persons[..], &additional_persons[..]].concat();
 
         let get_uuid = |name: &str, persons: &Vec<PersonDb>| {
-            persons.into_iter().find(|p| p.name.eq(name)).map(|p| p.uuid)
+            persons.iter().find(|p| p.name.eq(name)).map(|p| p.uuid)
         };
         let create_match = |male_name: &str, female_name: &str, persons: &Vec<PersonDb>| {
             MatchDb {

@@ -10,16 +10,16 @@ pub struct SeasonModel {
 
 #[derive(Clone, Debug)]
 pub enum SeasonStatusModel {
-    UPCOMING,
-    ONGOING,
-    COMPLETED,
+    Upcoming,
+    Ongoing,
+    Completed,
 }
 
 
 impl From<SeasonModel> for Season {
     fn from(value: SeasonModel) -> Self {
         Season {
-            uuid: value.uuid.clone(),
+            uuid: value.uuid,
             number: value.number,
             is_vip: value.is_vip,
             status: value.status.into(),
@@ -30,9 +30,9 @@ impl From<SeasonModel> for Season {
 impl From<SeasonStatusModel> for SeasonStatus {
     fn from(value: SeasonStatusModel) -> Self {
         match value {
-            SeasonStatusModel::UPCOMING => { SeasonStatus::UPCOMING }
-            SeasonStatusModel::ONGOING => { SeasonStatus::ONGOING }
-            SeasonStatusModel::COMPLETED => { SeasonStatus::COMPLETED }
+            SeasonStatusModel::Upcoming => { SeasonStatus::UPCOMING }
+            SeasonStatusModel::Ongoing => { SeasonStatus::ONGOING }
+            SeasonStatusModel::Completed => { SeasonStatus::COMPLETED }
         }
     }
 }

@@ -18,7 +18,7 @@ impl From<EventDb> for EventModel {
         EventModel {
             uuid: value.uuid.to_string(),
             season_uuid: value.season_uuid.to_string(),
-            created_timestamp: value.created_timestamp.clone(),
+            created_timestamp: value.created_timestamp,
             r#type: EventTypeModel::Start,
         }
     }
@@ -29,7 +29,7 @@ impl EventDb {
     pub fn create_match_box(season: &SeasonDb, r#match: MatchDb, is_perfect: bool) -> EventDb {
         EventDb {
             uuid: Uuid::new_v4(),
-            season_uuid: season.uuid.clone(),
+            season_uuid: season.uuid,
             created_timestamp: Utc::now().naive_utc(),
             r#match,
             is_perfect,

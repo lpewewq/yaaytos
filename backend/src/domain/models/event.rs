@@ -31,9 +31,9 @@ pub enum EventTypeModel {
 impl From<EventModel> for Event {
     fn from(value: EventModel) -> Self {
         Event {
-            uuid: value.uuid.clone(),
+            uuid: value.uuid,
             season_uuid: value.season_uuid.clone(),
-            created_timestamp: value.created_timestamp.clone(),
+            created_timestamp: value.created_timestamp,
             r#type: value.r#type.into(),
         }
     }

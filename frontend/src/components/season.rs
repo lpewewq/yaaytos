@@ -34,7 +34,7 @@ pub fn Seasons() -> Element {
             div {
                 for season in list {
                     h1 {
-                        Link { to: Route::Season { uuid: season.uuid.clone() },
+                        Link { to: Route::Season { uuid: season.uuid },
                             if season.is_vip { "VIP " } else {""} "Season {season.number} ({season.published.year()})"
                         }
                     }

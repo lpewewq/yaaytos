@@ -16,29 +16,29 @@ impl From<SeasonDb> for SeasonModel {
             uuid: value.uuid.to_string(),
             number: value.number,
             is_vip: value.is_vip,
-            status: SeasonStatusModel::COMPLETED,
+            status: SeasonStatusModel::Completed,
         }
     }
 }
 
 impl SeasonDb {
-    pub fn create_starter_participations(&self, persons: &Vec<PersonDb>) -> Vec<ParticipationDb> {
-        persons.into_iter()
+    pub fn create_starter_participations(&self, persons: &[PersonDb]) -> Vec<ParticipationDb> {
+        persons.iter()
             .map(|person|
                 ParticipationDb {
-                    season_uuid: self.uuid.clone(),
-                    person_uuid: person.uuid.clone(),
+                    season_uuid: self.uuid,
+                    person_uuid: person.uuid,
                     is_starter: true,
                 }
             ).collect()
     }
 
-    pub fn create_additional_participations(&self, persons: &Vec<PersonDb>) -> Vec<ParticipationDb> {
-        persons.into_iter()
+    pub fn create_additional_participations(&self, persons: &[PersonDb]) -> Vec<ParticipationDb> {
+        persons.iter()
             .map(|person|
                 ParticipationDb {
-                    season_uuid: self.uuid.clone(),
-                    person_uuid: person.uuid.clone(),
+                    season_uuid: self.uuid,
+                    person_uuid: person.uuid,
                     is_starter: false,
                 }
             ).collect()

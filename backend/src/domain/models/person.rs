@@ -16,7 +16,7 @@ pub enum GenderModel {
 impl From<PersonModel> for Person {
     fn from(value: PersonModel) -> Self {
         Person {
-            uuid: value.uuid.clone(),
+            uuid: value.uuid,
             name: value.name.clone(),
             gender: value.gender.into(),
         }
