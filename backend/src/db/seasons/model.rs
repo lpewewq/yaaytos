@@ -1,7 +1,7 @@
 use crate::db::participations::model::ParticipationDb;
 use crate::db::persons::model::PersonDb;
+use crate::domain::models::season::{SeasonModel, SeasonStatusModel};
 use uuid::Uuid;
-use yaaytos_common::{Season, SeasonStatus};
 
 #[derive(Clone)]
 pub struct SeasonDb {
@@ -10,17 +10,16 @@ pub struct SeasonDb {
     pub is_vip: bool,
 }
 
-impl From<SeasonDb> for Season {
+impl From<SeasonDb> for SeasonModel {
     fn from(value: SeasonDb) -> Self {
-        Season {
+        SeasonModel {
             uuid: value.uuid.to_string(),
             number: value.number,
             is_vip: value.is_vip,
-            status: SeasonStatus::COMPLETED,
+            status: SeasonStatusModel::COMPLETED,
         }
     }
 }
-
 
 impl SeasonDb {
     pub fn create_starter_participations(&self, persons: &Vec<PersonDb>) -> Vec<ParticipationDb> {

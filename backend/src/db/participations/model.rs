@@ -1,5 +1,5 @@
+use crate::domain::models::participation::{ParticipationModel, ParticipationTypeModel};
 use uuid::Uuid;
-use yaaytos_common::{Participation, ParticipationType};
 
 #[derive(Clone)]
 pub struct ParticipationDb {
@@ -8,12 +8,12 @@ pub struct ParticipationDb {
     pub is_starter: bool,
 }
 
-impl From<ParticipationDb> for Participation {
+impl From<ParticipationDb> for ParticipationModel {
     fn from(value: ParticipationDb) -> Self {
-        Participation {
+        ParticipationModel {
             season_uuid: value.season_uuid.to_string(),
             person_uuid: value.person_uuid.to_string(),
-            r#type: if value.is_starter { ParticipationType::Starter } else { ParticipationType::Addition },
+            r#type: if value.is_starter { ParticipationTypeModel::Starter } else { ParticipationTypeModel::Addition },
         }
     }
 }

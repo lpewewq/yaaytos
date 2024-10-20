@@ -1,37 +1,38 @@
+use crate::db::r#match::model::MatchDb;
 use crate::db::seasons::model::SeasonDb;
+use crate::domain::models::event::{EventModel, EventTypeModel};
 use chrono::{NaiveDateTime, Utc};
 use uuid::Uuid;
-use yaaytos_common::{Event, EventType, Match};
 
 #[derive(Clone)]
 pub struct EventDb {
     pub uuid: Uuid,
     pub season_uuid: Uuid,
     pub created_timestamp: NaiveDateTime,
-    pub r#type: EventType,
+    pub r#match: MatchDb,
+    pub is_perfect: bool,
 }
 
-impl From<EventDb> for Event {
+impl From<EventDb> for EventModel {
     fn from(value: EventDb) -> Self {
-        Event {
+        EventModel {
             uuid: value.uuid.to_string(),
             season_uuid: value.season_uuid.to_string(),
             created_timestamp: value.created_timestamp.clone(),
-            r#type: value.r#type.clone(),
+            r#type: EventTypeModel::Start,
         }
     }
 }
 
+
 impl EventDb {
-    pub fn create_match_box(season: &SeasonDb, r#match: Match, is_perfect: Option<bool>) -> EventDb {
+    pub fn create_match_box(season: &SeasonDb, r#match: MatchDb, is_perfect: bool) -> EventDb {
         EventDb {
             uuid: Uuid::new_v4(),
             season_uuid: season.uuid.clone(),
             created_timestamp: Utc::now().naive_utc(),
-            r#type: EventType::MatchBox {
-                r#match,
-                is_perfect,
-            },
+            r#match,
+            is_perfect,
         }
     }
 }

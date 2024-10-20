@@ -1,5 +1,6 @@
 mod api;
 mod db;
+mod domain;
 mod state;
 
 use crate::api::{events, participations, persons, seasons};

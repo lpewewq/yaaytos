@@ -1,9 +1,9 @@
 use crate::db::events::model::EventDb;
 use crate::db::participations::model::ParticipationDb;
 use crate::db::persons::model::PersonDb;
+use crate::db::r#match::model::MatchDb;
 use crate::db::seasons::model::SeasonDb;
 use uuid::Uuid;
-use yaaytos_common::Match;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -49,7 +49,7 @@ impl Default for AppState {
             persons.into_iter().find(|p| p.name.eq(name)).map(|p| p.uuid)
         };
         let create_match = |male_name: &str, female_name: &str, persons: &Vec<PersonDb>| {
-            Match {
+            MatchDb {
                 male_uuid: get_uuid(male_name, persons).unwrap().to_string(),
                 female_uuid: get_uuid(female_name, persons).unwrap().to_string(),
             }
@@ -62,16 +62,16 @@ impl Default for AppState {
         };
 
         let events = vec![
-            EventDb::create_match_box(&s1, create_match("Mo", "Ivana", &persons), Some(false)),
-            EventDb::create_match_box(&s1, create_match("Dominic", "Melissa", &persons), Some(false)),
-            EventDb::create_match_box(&s1, create_match("Mo", "Aline", &persons), Some(true)),
-            EventDb::create_match_box(&s1, create_match("Laurin", "Melissa", &persons), Some(true)),
-            EventDb::create_match_box(&s1, create_match("Elisha", "Ivana", &persons), Some(false)),
-            EventDb::create_match_box(&s1, create_match("Rene", "Michelle", &persons), Some(true)),
-            EventDb::create_match_box(&s1, create_match("Edin", "Ivana", &persons), Some(false)),
-            EventDb::create_match_box(&s1, create_match("Axel", "Sabrina", &persons), Some(false)),
-            EventDb::create_match_box(&s1, create_match("Ferhat", "Luisa", &persons), Some(false)),
-            EventDb::create_match_box(&s1, create_match("Kevin", "Katharina", &persons), Some(true)),
+            EventDb::create_match_box(&s1, create_match("Mo", "Ivana", &persons), false),
+            EventDb::create_match_box(&s1, create_match("Dominic", "Melissa", &persons), false),
+            EventDb::create_match_box(&s1, create_match("Mo", "Aline", &persons), true),
+            EventDb::create_match_box(&s1, create_match("Laurin", "Melissa", &persons), true),
+            EventDb::create_match_box(&s1, create_match("Elisha", "Ivana", &persons), false),
+            EventDb::create_match_box(&s1, create_match("Rene", "Michelle", &persons), true),
+            EventDb::create_match_box(&s1, create_match("Edin", "Ivana", &persons), false),
+            EventDb::create_match_box(&s1, create_match("Axel", "Sabrina", &persons), false),
+            EventDb::create_match_box(&s1, create_match("Ferhat", "Luisa", &persons), false),
+            EventDb::create_match_box(&s1, create_match("Kevin", "Katharina", &persons), true),
         ];
 
         AppState {

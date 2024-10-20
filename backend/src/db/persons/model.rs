@@ -1,5 +1,5 @@
+use crate::domain::models::person::{GenderModel, PersonModel};
 use uuid::Uuid;
-use yaaytos_common::{Gender, Person};
 
 #[derive(Clone)]
 pub struct PersonDb {
@@ -8,12 +8,12 @@ pub struct PersonDb {
     pub is_male: bool,
 }
 
-impl From<PersonDb> for Person {
+impl From<PersonDb> for PersonModel {
     fn from(value: PersonDb) -> Self {
-        Person {
+        PersonModel {
             uuid: value.uuid.to_string(),
             name: value.name.clone(),
-            gender: if value.is_male { Gender::Male } else { Gender::Female },
+            gender: if value.is_male { GenderModel::Male } else { GenderModel::Female },
         }
     }
 }
